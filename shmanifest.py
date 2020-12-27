@@ -44,7 +44,21 @@ def cli(user, passwd, verbose, registry):
                 if verbose:
                     click.secho(' Found {} images:'.format(len(image_list)), fg='green')
                 for img in image_list:
-                    click.secho('  * {}'.format(img), fg='green')
+                    click.secho('  * {}'.format(img), fg='green', nl=False)
+                    if verbose:
+                        # https://registry.defenselayers.dev/v2/deflayers-nginx-beta/tags/list
+                        click.secho(': ', fg='green', nl=False)
+                        image_tags_url = 'v2/{}/tags/list'.format(img)
+                        registry_image_tags_url = urllib.parse.urljoin(reg, image_tags_url)
+                        r = requests.get(registry_image_tags_url, auth=HTTPBasicAuth(user, passwd))
+                        if r.status_code == 200:
+                            json_data = json.loads(r.text)
+                            tags = json_data['tags']
+                            for t in tags:
+                                click.secho('{} '.format(t), fg='white', nl=False)
+                        else:
+                            click.secho('missing tag list for image', fg='red')
+                    click.secho('')
             else:
                 click.secho(' ERROR: wrong response from registry or incorrect username/password (', nl=False,
                             fg='red')
@@ -52,3 +66,11 @@ def cli(user, passwd, verbose, registry):
                 click.secho(').', fg='red')
         except requests.exceptions.ConnectionError:
             click.secho(' ERROR: Failed to connect to registry.', fg='red')
+        except ValueError:
+            # json.loads uses exception based on ValueError so we handle ValueError instead for all cases,
+            # not just json.loads
+            click.secho(' ERROR: Malformed JSON response from registry.', fg='red')
+        except KeyError:
+            click.secho(' ERROR: Wrong JSON response from registry.', fg='red')
+        except KeyboardInterrupt:
+            click.secho(' ERROR: Interrupted by user.', fg='red')
