@@ -41,10 +41,15 @@ On Linux:
 $ export SHMANIFEST_USER=user
 ```
 
-To get more verbose output use `-v` option.
+To get more verbose output use `-v` option. Since version `0.2` verbose output lists all tags per image.
 
 ## Getting help
 To list all available option run `shm` with `--help` switch.
 
 ## For developers
 If you are a developer you can find further development details in `wiki` directory.
+
+## Changelog
+
+* 0.1 initial release
+* 0.2 extended verbose mode to list all image tags

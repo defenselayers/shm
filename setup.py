@@ -5,7 +5,7 @@ with open("README.md", "rt") as fin:
 
 setup(
     name="shm",
-    version="0.1",
+    version="0.2",
     author="Aleksander P. Czarnowski",
     description="Defenselayers secure harbour manifest tool (container registry utility).",
     long_description=long_description,
